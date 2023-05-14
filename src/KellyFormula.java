@@ -4,13 +4,13 @@ import java.util.List;
 
 public class KellyFormula {
     public static void main(String[] args) {
-        double winProbability = 0.65;  // 이길 확률
+        double winProbability = 0.6;  // 이길 확률
         double winOdds = 1.01;  // 이길 때의 배당률
         double losePercentage = 0.01;  // 질 때 잃는 금액의 비율
 
         double kellyFraction;
         try {
-            kellyFraction = calculateKellyFraction(winProbability, winOdds, losePercentage)*100; //1%잃으니 *100보정
+            kellyFraction = calculateKellyFraction(winProbability, winOdds, losePercentage) * 70; // 1% 잃으니 *100 보정해야하는데 보수적으로 *70만
         } catch (IllegalArgumentException e) {
             System.out.println("이길 때의 배당률은 1보다 커야 합니다. 다시 설정해주세요.");
             return;
@@ -20,7 +20,7 @@ public class KellyFormula {
         DecimalFormat formatter = new DecimalFormat("#,###");
 
         int numSimulations = 10000;  // 시뮬레이션 횟수
-        int numInvestments = 20;  // 투자 횟수
+        int numInvestments = 30;  // 투자 횟수
 
         List<Double> simulationResults = new ArrayList<>();
         List<Double> profits = new ArrayList<>(); // 투자에서의 이익을 추적하기 위한 List
@@ -31,11 +31,20 @@ public class KellyFormula {
 
             for (int j = 0; j < numInvestments; j++) {
                 double initialCapital = currentCapital;
+                double investmentAmount;
+
+                if (j == 0) {
+                    investmentAmount = totalCapital * kellyFraction * (winOdds - 1);
+                } else {
+                    investmentAmount = currentCapital * kellyFraction;
+                }
 
                 if (Math.random() < winProbability) {
-                    currentCapital += totalCapital * kellyFraction * (winOdds - 1);
+                    double winProfit = investmentAmount * (winOdds - 1); // 이길 경우의 이익
+                    currentCapital += winProfit; // 이길 경우 투자 이익을 현재 자산에 추가
                 } else {
-                    currentCapital -= totalCapital * kellyFraction * losePercentage; // 질 때 투자한 금액의 비율만큼 잃음
+                    double lossAmount = investmentAmount * losePercentage; // 질 경우 잃을 금액
+                    currentCapital -= lossAmount; // 질 경우 투자 손실을 현재 자산에서 차감
                 }
 
                 double profit = currentCapital - initialCapital;
@@ -71,9 +80,4 @@ public class KellyFormula {
         return (winProbability * (winOdds - 1) - (1 - winProbability) * losePercentage) / ((winOdds - 1) + losePercentage);
     }
 }
-
-
-
-
-
 
