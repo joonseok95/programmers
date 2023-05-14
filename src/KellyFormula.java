@@ -10,7 +10,7 @@ public class KellyFormula {
 
         double kellyFraction;
         try {
-            kellyFraction = calculateKellyFraction(winProbability, winOdds, losePercentage) * 70; // 1% 잃으니 *100 보정해야하는데 보수적으로 *70만.
+            kellyFraction = calculateKellyFraction(winProbability, winOdds, losePercentage) * 100; // 1% 잃으니 *100 보정.
         } catch (IllegalArgumentException e) {
             System.out.println("이길 때의 배당률은 1보다 커야 합니다. 다시 설정해주세요.");
             return;
@@ -20,7 +20,7 @@ public class KellyFormula {
         DecimalFormat formatter = new DecimalFormat("#,###");
 
         int numSimulations = 10000;  // 시뮬레이션 횟수
-        int numInvestments = 30;  // 투자 횟수
+        int numInvestments = 20;  // 투자 횟수
 
         List<Double> simulationResults = new ArrayList<>();
         List<Double> profits = new ArrayList<>(); // 투자에서의 이익을 추적하기 위한 List
@@ -31,13 +31,7 @@ public class KellyFormula {
 
             for (int j = 0; j < numInvestments; j++) {
                 double initialCapital = currentCapital;
-                double investmentAmount;
-
-                if (j == 0) {
-                    investmentAmount = totalCapital * kellyFraction * (winOdds - 1);
-                } else {
-                    investmentAmount = currentCapital * kellyFraction;
-                }
+                double investmentAmount = currentCapital * kellyFraction;
 
                 if (Math.random() < winProbability) {
                     double winProfit = investmentAmount * (winOdds - 1); // 이길 경우의 이익
