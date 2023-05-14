@@ -10,7 +10,7 @@ public class KellyFormula {
 
         double kellyFraction;
         try {
-            kellyFraction = calculateKellyFraction(winProbability, winOdds, losePercentage)*30;
+            kellyFraction = calculateKellyFraction(winProbability, winOdds, losePercentage)*30; //100이 정상인듯
         } catch (IllegalArgumentException e) {
             System.out.println("이길 때의 배당률은 1보다 커야 합니다. 다시 설정해주세요.");
             return;
